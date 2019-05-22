@@ -1,0 +1,9 @@
+.DS_Store
+
+tmp/*/*
+!tmp/*/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+.eye
