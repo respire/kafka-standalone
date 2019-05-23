@@ -27,3 +27,31 @@ bundle install
 ```
 ./bin/leye stop all
 ```
+
+### HOW TO: configure maxwell for mysql 5.7.x
+1. edit my.cnf (in most cases, /etc/mysql/mysql.conf.d/mysqld.conf)
+```
+server-id                    = 1
+log_bin                      = mysql-bin
+binlog_format                = row
+binlog_row_image             = full
+expire_logs_days             = 10
+max_binlog_size              = 1G
+log_slave_updates            = ON
+gtid_mode                    = ON
+enforce_gtid_consistency     = ON
+binlog_rows_query_log_events = ON
+```
+2. restart mysql server
+3. ```sudo mysql -u root```
+4. execute script to create user and tables for maxwell.
+```.sql
+CREATE USER 'maxwell'@'localhost' IDENTIFIED BY 'maxwell';
+GRANT ALL ON maxwell.* TO 'maxwell'@'localhost';
+GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'localhost';
+```
+5. you can start maxwell now
+6. if you want to bootstrap tables, execute following script for each table
+```.sql
+INSERT INTO maxwell.boostrap(database_name, table_name) values ('DATABASE_TO_BOOTSTRAP', 'TABLE_TO_BOOTSTRAP');
+```
